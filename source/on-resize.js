@@ -1,23 +1,23 @@
 /* eslint no-param-reassign: 0 */
 
-import { isServer, window } from "./platform"
+import { isServer, window as topWindow } from "./platform"
 import { noop } from "./utils"
 
 const requestAnimationFrame = isServer
   ? noop
-  : window.requestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
+  : topWindow.requestAnimationFrame ||
+    topWindow.mozRequestAnimationFrame ||
+    topWindow.webkitRequestAnimationFrame ||
     (fn => {
-      window.setTimeout(fn, 20)
+      topWindow.setTimeout(fn, 20)
     })
 
 const cancelAnimationFrame = isServer
   ? noop
-  : window.cancelAnimationFrame ||
-    window.mozCancelAnimationFrame ||
-    window.webkitCancelAnimationFrame ||
-    window.clearTimeout
+  : topWindow.cancelAnimationFrame ||
+    topWindow.mozCancelAnimationFrame ||
+    topWindow.webkitCancelAnimationFrame ||
+    topWindow.clearTimeout
 
 const isIE = isServer ? false : navigator.userAgent.match(/Trident/)
 
@@ -86,7 +86,7 @@ const initialize = el => {
   }
 }
 
-const on = (el, fn) => {
+const on = (el, fn, window) => {
   /* Window object natively publishes resize events. We handle it as a
   special case here so that users do not have to think about two APIs. */
 
@@ -101,7 +101,7 @@ const on = (el, fn) => {
   el[namespace].listeners.push(fn)
 }
 
-const off = (el, fn) => {
+const off = (el, fn, window) => {
   if (el === window) {
     window.removeEventListener("resize", fn)
     return

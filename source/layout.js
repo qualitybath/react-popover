@@ -1,4 +1,3 @@
-import { window } from "./platform"
 import { equalRecords, find } from "./utils"
 
 /* Axes System
@@ -59,7 +58,7 @@ const place = (flow, axis, align, bounds, size) => {
 
 const El = {}
 
-El.calcBounds = el => {
+El.calcBounds = (el, window) => {
   if (el === window) {
     return {
       x: 0,
@@ -83,12 +82,12 @@ El.calcBounds = el => {
   }
 }
 
-El.calcSize = el =>
+El.calcSize = (el, window) =>
   el === window
     ? { w: el.innerWidth, h: el.innerHeight }
     : { w: el.offsetWidth, h: el.offsetHeight }
 
-El.calcScrollSize = el =>
+El.calcScrollSize = (el, window) =>
   el === window
     ? {
         w: el.scrollX || el.pageXOffset,

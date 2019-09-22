@@ -73,7 +73,7 @@ class Popover extends React.Component {
     enterExitTransitionDurationMs: 500,
     children: null,
     refreshIntervalMs: 200,
-    appendTarget: Platform.isClient ? Platform.document.body : null,
+    window: Platform.window,
   }
   constructor(props) {
     super(props)
@@ -167,7 +167,7 @@ class Popover extends React.Component {
 
     const dockingEdgeBufferLength =
       Math.round(getComputedStyle(this.bodyEl).borderRadius.slice(0, -2)) || 0
-    const scrollSize = Layout.El.calcScrollSize(this.frameEl)
+    const scrollSize = Layout.El.calcScrollSize(this.frameEl, this.props.window)
     scrollSize.main = scrollSize[axis.main.size]
     scrollSize.cross = scrollSize[axis.cross.size]
 
@@ -286,10 +286,13 @@ class Popover extends React.Component {
     if (this.measureTargetBounds()) this.resolvePopoverLayout()
   }
   measurePopoverSize() {
-    this.size = Layout.El.calcSize(this.containerEl)
+    this.size = Layout.El.calcSize(this.containerEl, this.props.window)
   }
   measureTargetBounds() {
-    const newTargetBounds = Layout.El.calcBounds(this.targetEl)
+    const newTargetBounds = Layout.El.calcBounds(
+      this.targetEl,
+      this.props.window,
+    )
 
     if (
       this.targetBounds &&
@@ -388,7 +391,7 @@ class Popover extends React.Component {
     be a nice feature in the future to allow other frames to be used
     such as local elements that further constrain the popover`s world. */
 
-    this.frameEl = Platform.window
+    this.frameEl = this.props.window
     this.hasTracked = true
 
     /* Set a general interval for checking if target position changed. There is no way
@@ -424,15 +427,21 @@ class Popover extends React.Component {
     )
 
     this.frameEl.addEventListener("scroll", this.onFrameScroll)
-    resizeEvent.on(this.frameEl, this.onFrameResize)
-    resizeEvent.on(this.containerEl, this.onPopoverResize)
-    resizeEvent.on(this.targetEl, this.onTargetResize)
+    resizeEvent.on(this.frameEl, this.onFrameResize, this.props.window)
+    resizeEvent.on(this.containerEl, this.onPopoverResize, this.props.window)
+    resizeEvent.on(this.targetEl, this.onTargetResize, this.props.window)
 
     /* Track user actions on the page. Anything that occurs _outside_ the Popover boundaries
     should close the Popover. */
 
-    Platform.document.addEventListener("mousedown", this.checkForOuterAction)
-    Platform.document.addEventListener("touchstart", this.checkForOuterAction)
+    this.props.window.document.addEventListener(
+      "mousedown",
+      this.checkForOuterAction,
+    )
+    this.props.window.document.addEventListener(
+      "touchstart",
+      this.checkForOuterAction,
+    )
 
     /* Kickstart layout at first boot. */
 
@@ -450,11 +459,14 @@ class Popover extends React.Component {
   untrackPopover() {
     clearInterval(this.checkLayoutInterval)
     this.frameEl.removeEventListener("scroll", this.onFrameScroll)
-    resizeEvent.off(this.frameEl, this.onFrameResize)
-    resizeEvent.off(this.containerEl, this.onPopoverResize)
-    resizeEvent.off(this.targetEl, this.onTargetResize)
-    Platform.document.removeEventListener("mousedown", this.checkForOuterAction)
-    Platform.document.removeEventListener(
+    resizeEvent.off(this.frameEl, this.onFrameResize, this.props.window)
+    resizeEvent.off(this.containerEl, this.onPopoverResize, this.props.window)
+    resizeEvent.off(this.targetEl, this.onTargetResize, this.props.window)
+    this.props.window.document.removeEventListener(
+      "mousedown",
+      this.checkForOuterAction,
+    )
+    this.props.window.document.removeEventListener(
       "touchstart",
       this.checkForOuterAction,
     )
@@ -481,7 +493,7 @@ class Popover extends React.Component {
     this.resolvePopoverLayout()
   }
   measureFrameBounds() {
-    this.frameBounds = Layout.El.calcBounds(this.frameEl)
+    this.frameBounds = Layout.El.calcBounds(this.frameEl, this.props.window)
   }
   getContainerNodeRef = containerEl => {
     Object.assign(this, { containerEl })
@@ -504,7 +516,10 @@ class Popover extends React.Component {
     return [
       this.props.children,
       Platform.isClient &&
-        ReactDOM.createPortal(popover, this.props.appendTarget),
+        ReactDOM.createPortal(
+          popover,
+          this.props.appendTarget || this.props.window.document.body,
+        ),
     ]
   }
 }

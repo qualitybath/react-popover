@@ -17,11 +17,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/littlebits/react-popover.git"
+    "url": "https://github.com/qualitybath/react-popover.git"
   },
   "author": "Jason Kuhrt <jasonkuhrt@me.com> (http://jasonkuhrt.com/)",
-  "name": "react-popover",
-  "homepage": "https://github.com/littlebits/react-popover",
+  "name": "@qb/react-popover",
+  "homepage": "https://github.com/qualitybath/react-popover",
   "main": "index.js",
   "description": "A specification backed popover for react",
   "devDependencies": {
@@ -45,11 +45,12 @@
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-draggable": "3.0.3",
+    "react-frame-component": "^4.1.1",
     "react-test-renderer": "16",
     "release": "^4.0.0"
   },
   "bugs": {
-    "url": "https://github.com/littlebits/react-popover/issues"
+    "url": "https://github.com/qualitybath/react-popover/issues"
   },
   "eslintConfig": {
     "parser": "babel-eslint",

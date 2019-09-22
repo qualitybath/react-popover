@@ -15,8 +15,9 @@ class Row extends React.Component {
     const { isOpen } = this.state
     return (
       <Popover
+        window={this.props.window}
         isOpen={isOpen}
-        body="!"
+        body={this.props.children}
         children={
           <div
             className="Row"
@@ -30,10 +31,12 @@ class Row extends React.Component {
   }
 }
 
-const Main = () => (
+const Main = ({ window }) => (
   <div
     id="app"
-    children={F.range(0, 51).map(i => <Row key={i} children={i} />)}
+    children={F.range(0, 51).map(i => (
+      <Row window={window} key={i} children={i} />
+    ))}
   />
 )
 

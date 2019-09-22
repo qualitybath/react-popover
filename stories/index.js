@@ -4,12 +4,14 @@ import { storiesOf } from "@storybook/react"
 import React from "react"
 import Playground from "./playground/main"
 import Rows from "./rows/main"
+import Iframe from "./iframe/main"
 
 // import { Button, Welcome } from "@storybook/react/demo";
 
 storiesOf("Popover", module)
   .add("Playground", () => <Playground />)
   .add("Rows", () => <Rows />)
+  .add("Iframe", () => <Iframe />)
 
 // storiesOf("Welcome", module).add("to Storybook", () => <Welcome showApp={linkTo("Button")} />);
 //
